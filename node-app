@@ -1,0 +1,56 @@
+#!/bin/sh
+
+#
+# chkconfig: 35 99 99
+# description: Node.js /home/ec2-user/karavan/app.js
+#
+
+. /etc/init.d/functions
+. /home/ec2-user/nodeapp
+set -u
+do_start()
+{
+        if [ ! -f "$LOCK_FILE" ] ; then
+                echo -n $"Starting $SERVER: "
+                daemonize -p $PID_FILE -l $LOCK_FILE -E NODE_ENV=$NODE_ENV -E NODE_CONFIG_DIR=$CONFIG_DIR $DAEMON $SERVER
+                RETVAL=$?
+		[ $RETVAL -eq 0 ] && echo `success` || echo `failure`
+		return $RETVAL
+        else
+                echo "$SERVER is locked."
+                RETVAL=1
+        fi
+}
+do_stop()
+{
+        echo -n $"Stopping $SERVER: "
+      #  pid=`ps -aefw | grep "$DAEMON $SERVER" | grep -v " grep " | awk '{print $2}'`
+       # kill -9 $pid > /dev/null 2>&1 && echo_success || echo_failure
+        kill -15 $(cat $PID_FILE)
+	RETVAL=$?
+	if        [ $RETVAL -eq 0 ]; then
+		 rm -f $LOCK_FILE
+		echo `success`
+	else 
+		echo `failure`
+fi	
+	return $RETVAL
+}
+
+case "$1" in
+        start)
+                do_start
+                ;;
+        stop)
+                do_stop
+                ;;
+        restart)
+                do_stop
+                do_start
+                ;;
+        *)
+                echo "Usage: $0 {start|stop|restart}"
+                RETVAL=1
+esac
+
+exit $RETVAL
