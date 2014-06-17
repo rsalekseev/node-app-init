@@ -1,0 +1,9 @@
+USER="ec2-user"
+DAEMON="/usr/local/bin/node"
+ROOT_DIR="/home/ec2-user/karavan"
+NODE_ENV=production
+SERVER="$ROOT_DIR/app.js"
+CONFIG_DIR=$ROOT_DIR/config
+LOG_FILE="/home/ec2-user/log/app.log"
+PID_FILE="/var/run/node-app.pid"
+LOCK_FILE="/var/lock/subsys/node-app"
